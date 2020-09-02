@@ -83,7 +83,6 @@ void pressureCharacteristicValueWrittenHandle(BLECentral& central, BLECharacteri
 void pressureCharacteristicSubscribedHandle(BLECentral& central, BLECharacteristic& characteristic) {
   Serial.print(F("Subscribed to characteristic value: "));
   taking_data = true;
-  timer.attachInterrupt(&Timer_callback, 1000000); // microseconds
   BLEUtil::printBuffer(characteristic.value(), characteristic.valueLength());
 }
 
