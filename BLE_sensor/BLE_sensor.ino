@@ -3,36 +3,42 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 // Import libraries (BLEPeripheral depends on SPI)
-#include <SPI.h>
-#include <BLEPeripheral.h>
-#include <BLEUtil.h>
-
 #include <nrf.h>
 #include "nrf_timer.h"
 #include "Timer.h"
 
+#define OUT_PIN  7
+
 #define nrf_timer_num   (1)
 #define cc_channel_num  (0)
-#define anio0 2
+#define anio2 2
 
-TimerClass timer(nrf_timer_num, cc_channel_num);
+#include <SPI.h>
+#include <BLEPeripheral.h>
+#include <BLEUtil.h>
 
 BLEPeripheral gaitPeripheral = BLEPeripheral();
+TimerClass timer(nrf_timer_num, cc_channel_num);
+
+int taking_data = false;
+int sensorValue = 0;  // variable to store the value coming from the sensor
 
 // create remote services
 BLEService GaitService = BLEService("573bc6051c3c4467b4aa44e0c6c6b410");
 
 // create remote characteristics
-BLECharacteristic pressure1Characteristic = BLECharacteristic("5a8ac39c0ce142128b46d589ba126ce2", BLERead | BLENotify ,20);
-BLECharacteristic pressure2Characteristic = BLECharacteristic("f8bc0798e4474625959fce6970b70ed1", BLEWrite | BLEWriteWithoutResponse,20);
+BLECharacteristic pressureCharacteristic = BLECharacteristic("5a8ac39c0ce142128b46d589ba126ce2", BLERead | BLENotify ,20);
+BLECharacteristic periodCharacteristic = BLECharacteristic("f8bc0798e4474625959fce6970b70ed1", BLEWrite,4);
 
-int taking_data = false;
-int sensorValue = 0;  // variable to store the value coming from the sensor
 
 void setup() {
+  pinMode(OUT_PIN, OUTPUT);
+  digitalWrite(OUT_PIN, 1);
+  pinMode(anio2, INPUT_PULLUP);
+  
   // put your setup code here, to run once:
   Serial.begin(115200);
-  pinMode(anio0, INPUT_PULLUP);
+  
   gaitPeripheral.setLocalName("Pressure-Sensor1");
 
   // set device name and appearance
@@ -40,37 +46,32 @@ void setup() {
   gaitPeripheral.setAppearance(0x0080);
 
   gaitPeripheral.addAttribute(GaitService);
-  gaitPeripheral.addAttribute(pressure1Characteristic);
-  gaitPeripheral.addAttribute(pressure2Characteristic);
+  gaitPeripheral.addAttribute(pressureCharacteristic);
+  gaitPeripheral.addAttribute(periodCharacteristic);
 
   // assign event handlers for connected, disconnected to peripheral
   gaitPeripheral.setEventHandler(BLEConnected, blePeripheralConnectHandler);
   gaitPeripheral.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
-  gaitPeripheral.setEventHandler(BLERemoteServicesDiscovered, blePeripheralServicesDiscoveredHandler);
 
   // assign event handlers for characteristic
-  pressure1Characteristic.setEventHandler(BLESubscribed, pressureCharacteristicSubscribedHandle);
-  pressure1Characteristic.setEventHandler(BLEUnsubscribed, pressureCharacteristicUnSubscribedHandle);
-  pressure2Characteristic.setEventHandler(BLEWritten, pressureCharacteristicValueWrittenHandle);
+  pressureCharacteristic.setEventHandler(BLESubscribed, pressureCharacteristicSubscribedHandle);
+  pressureCharacteristic.setEventHandler(BLEUnsubscribed, pressureCharacteristicUnSubscribedHandle);
+  periodCharacteristic.setEventHandler(BLEWritten, pressureCharacteristicValueWrittenHandle);
 
   // begin initialization
   gaitPeripheral.begin();
   
-
-
-  Serial.println(F("BLE Peri"));
+  Serial.println(F("BLE started..."));
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  gaitPeripheral.poll();
+     // Sleep
     __WFE(); // Enter System ON sleep mode (OFF mode would stop timers)
     __SEV(); // Make sure any pending events are cleared
     __WFE(); // More info about this sequence:
-  gaitPeripheral.poll();
-}
-
-void timerHandler() {
-  Serial.println(F("timer interrupt"));
+// devzone.nordicsemi.com/f/nordic-q-a/490/how-do-you-put-the-nrf51822-chip-to-sleep/2571
 }
 
 void blePeripheralConnectHandler(BLECentral& central) {
@@ -85,12 +86,6 @@ void blePeripheralDisconnectHandler(BLECentral& central) {
   Serial.println(central.address());
 }
 
-void blePeripheralServicesDiscoveredHandler(BLECentral& central) {
-  // central remote services discovered event handler
-  Serial.print(F("Services discovered event, central: "));
-  Serial.println(central.address());
-}
-
 void pressureCharacteristicValueWrittenHandle(BLECentral& central, BLECharacteristic& characteristic) {
   Serial.print(F("Written characteristic value: "));
 
@@ -100,22 +95,24 @@ void pressureCharacteristicValueWrittenHandle(BLECentral& central, BLECharacteri
 void pressureCharacteristicSubscribedHandle(BLECentral& central, BLECharacteristic& characteristic) {
   Serial.print(F("Subscribed to characteristic value: "));
   taking_data = true;
-  timer.attachInterrupt(&Timer_callback, 1000000); // microseconds
   BLEUtil::printBuffer(characteristic.value(), characteristic.valueLength());
+  timer.attachInterrupt(&Timer_callback, 300000); // microseconds
+  taking_data = true;
+  digitalWrite(OUT_PIN, 0);
 }
 
 void pressureCharacteristicUnSubscribedHandle(BLECentral& central, BLECharacteristic& characteristic) {
   Serial.print(F("Unsubscribed to characteristic value: "));
   taking_data = false;
   BLEUtil::printBuffer(characteristic.value(), characteristic.valueLength());
+  digitalWrite(OUT_PIN, 1);
 }
 
 void Timer_callback() {
-    sensorValue = analogRead(anio0);
-    Serial.print("Measuring: ");
-    Serial.println(sensorValue);
-
     if (taking_data) {
-    timer.attachInterrupt(&Timer_callback, 1000000); // microseconds
-    }
+      timer.attachInterrupt(&Timer_callback, 300000); // microseconds
+      sensorValue = analogRead(anio2);
+      Serial.print(F("Measuring... "));
+      Serial.println(sensorValue);
+   }
 }

@@ -36,7 +36,7 @@ void setup() {
   digitalWrite(OUT_PIN, 0);
 
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
   
   gaitPeripheral.setLocalName("Pressure-Sensor1");
 
@@ -109,13 +109,15 @@ void pressureCharacteristicUnSubscribedHandle(BLECentral& central, BLECharacteri
 void Timer_callback() {
     if (blinking==1) {
       timer.attachInterrupt(&Timer_callback, 300000); // microseconds
-    }
-    Serial.println("timer called...");
-    if (led_state) {
-      digitalWrite(OUT_PIN, 1); // to visualize when it was called
-      led_state = 0;
-    } else {
-      digitalWrite(OUT_PIN, 0);
-      led_state = 1;
-    }
+      Serial.println(F("timer called..."));
+      if (led_state) {
+        digitalWrite(OUT_PIN, 1); // to visualize when it was called
+        led_state = 0;
+      } else {
+        digitalWrite(OUT_PIN, 0);
+        led_state = 1;
+      } 
+    }else {
+      digitalWrite(OUT_PIN, 1);
+   }
 }
