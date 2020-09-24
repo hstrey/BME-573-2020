@@ -59,12 +59,14 @@ void setup() {
   gaitPeripheral.setLocalName("Pressure-Sensor1");
 
   // set device name and appearance
-  gaitPeripheral.setDeviceName("Pressure-Sensor");
+  gaitPeripheral.setDeviceName("Pressure-Sensor1");
   gaitPeripheral.setAppearance(0x0080);
 
   gaitPeripheral.addAttribute(GaitService);
   gaitPeripheral.addAttribute(pressureCharacteristic);
   gaitPeripheral.addAttribute(periodCharacteristic);
+  
+  gaitPeripheral.setAdvertisedServiceUuid(GaitService.uuid());
 
   // assign event handlers for connected, disconnected to peripheral
   gaitPeripheral.setEventHandler(BLEConnected, blePeripheralConnectHandler);
