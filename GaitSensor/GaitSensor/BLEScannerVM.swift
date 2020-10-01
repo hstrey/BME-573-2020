@@ -32,7 +32,11 @@ class BLEScannerVM: NSObject, ObservableObject, CBCentralManagerDelegate {
     func scan() {
         print("scanning...")
         if centralManager.state == .poweredOn {
-            centralManager.scanForPeripherals(withServices: [], options: nil)
+            centralManager.scanForPeripherals(withServices: [pressure_service_uuid], options: nil)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                print("stop scanning")
+                self.centralManager.stopScan()
+            }
         }
     }
     
@@ -48,6 +52,15 @@ class BLEScannerVM: NSObject, ObservableObject, CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         print("\(peripheral.name ?? "nothing") rssi:\(RSSI)")
-        scannerdata.addscanner(scannerName: peripheral.name ?? "noname", rssi: Int(truncating: RSSI))
+        print("local name: \(advertisementData["kCBAdvDataLocalName"] ?? "no local name")")
+        scannerdata.addscanner(scannerName: peripheral.name ?? "noname",
+                                   localName: (advertisementData["kCBAdvDataLocalName"] ?? "no local name") as! String,
+                                    rssi: Int(truncating: RSSI),
+                                    peripheral:peripheral)
     }
+    
+    let pressure_char_uuid = CBUUID(string:"5A8AC39C-0CE1-4212-8B46-D589BA126CE2")
+    let period_char_uuid = CBUUID(string:"F8BC0798-E447-4625-959F-CE6970B70ED1")
+    let pressure_service_uuid = CBUUID(string:"573BC605-1C3C-4467-B4AA-44E0C6C6B410")
+
 }
