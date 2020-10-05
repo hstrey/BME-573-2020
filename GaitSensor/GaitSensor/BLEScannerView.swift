@@ -12,7 +12,7 @@ struct BLEScannerView: View {
     @ObservedObject var viewmodel : BLEScannerVM
     var body: some View {
         VStack {
-            sensorListView(sensorList: viewmodel.blesensors)
+            sensorListView(sensorList: viewmodel.blesensors,vm:viewmodel)
             Spacer()
             Button(action: {viewmodel.scan()}, label: {Text("Scan")})
                 .padding()
@@ -22,14 +22,33 @@ struct BLEScannerView: View {
     
     struct sensorListView: View {
         var sensorList: [BLESensor]
+        var vm:BLEScannerVM
         var body: some View {
             NavigationView {
                 List { ForEach(sensorList) {sensor in
-                    Text(sensor.scannerName)
+                    NavigationLink(destination: dataView(sensor:sensor,vm:vm)){
+                        VStack(alignment:.leading){
+                            Text("\(sensor.scannerName) : \(sensor.rssi)")
+                            Text("UUID: \(sensor.id)").font(.caption)
+                        }
                     }
+                }
                 }.navigationBarTitle("Sensors")
+                .onDisappear() {
+                    print("navigationView disappeared")
+                }
             }.padding()
-
+        }
+    }
+    
+    struct dataView: View {
+        var sensor:BLESensor
+        var vm:BLEScannerVM
+        var body: some View {
+            Text("\(sensor.scannerName)").onAppear() {
+                print("dataView appeared")
+                vm.connect(peripheral:sensor)
+            }
         }
     }
 }

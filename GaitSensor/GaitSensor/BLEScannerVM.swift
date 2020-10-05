@@ -40,6 +40,11 @@ class BLEScannerVM: NSObject, ObservableObject, CBCentralManagerDelegate {
         }
     }
     
+    func connect(peripheral: BLESensor) {
+        print("called connect...")
+//        centralManager.connect(peripheral.peripheral, options:nil)
+    }
+    
     // MARK: - Bluetooth
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         print("DidUpdateState called")
@@ -53,10 +58,12 @@ class BLEScannerVM: NSObject, ObservableObject, CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         print("\(peripheral.name ?? "nothing") rssi:\(RSSI)")
         print("local name: \(advertisementData["kCBAdvDataLocalName"] ?? "no local name")")
+        print("uuid: \(peripheral.identifier)")
         scannerdata.addscanner(scannerName: peripheral.name ?? "noname",
                                    localName: (advertisementData["kCBAdvDataLocalName"] ?? "no local name") as! String,
                                     rssi: Int(truncating: RSSI),
-                                    peripheral:peripheral)
+                                    peripheral:peripheral,
+                                    uuid: peripheral.identifier)
     }
     
     let pressure_char_uuid = CBUUID(string:"5A8AC39C-0CE1-4212-8B46-D589BA126CE2")
