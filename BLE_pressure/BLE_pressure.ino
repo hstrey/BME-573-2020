@@ -56,7 +56,7 @@ void setup() {
   Serial.print("sizeof int: ");
   Serial.println(sizeof(intervalmicsec));
   
-  gaitPeripheral.setLocalName("Pressure-Sensor1");
+  gaitPeripheral.setLocalName("Pressure-Sensor");
 
   // set device name and appearance
   gaitPeripheral.setDeviceName("Pressure-Sensor1");
