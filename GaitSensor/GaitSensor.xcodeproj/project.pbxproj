@@ -15,6 +15,7 @@
 		F10DD93725196AAE00B6B7A3 /* BLEScanners.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10DD93625196AAE00B6B7A3 /* BLEScanners.swift */; };
 		F10DD93925196F2100B6B7A3 /* BLEScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10DD93825196F2100B6B7A3 /* BLEScannerView.swift */; };
 		F18AC00D251C02A500FF7469 /* BLEScannerVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18AC00C251C02A500FF7469 /* BLEScannerVM.swift */; };
+		F1CA35E6252E7E4100524F01 /* DataHexEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1CA35E5252E7E4100524F01 /* DataHexEncoding.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		F10DD93625196AAE00B6B7A3 /* BLEScanners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEScanners.swift; sourceTree = "<group>"; };
 		F10DD93825196F2100B6B7A3 /* BLEScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEScannerView.swift; sourceTree = "<group>"; };
 		F18AC00C251C02A500FF7469 /* BLEScannerVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEScannerVM.swift; sourceTree = "<group>"; };
+		F1CA35E5252E7E4100524F01 /* DataHexEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHexEncoding.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +67,7 @@
 				F10DD924251960AE00B6B7A3 /* SceneDelegate.swift */,
 				F10DD93625196AAE00B6B7A3 /* BLEScanners.swift */,
 				F18AC00C251C02A500FF7469 /* BLEScannerVM.swift */,
+				F1CA35E5252E7E4100524F01 /* DataHexEncoding.swift */,
 				F10DD928251960B000B6B7A3 /* Assets.xcassets */,
 				F10DD92D251960B000B6B7A3 /* LaunchScreen.storyboard */,
 				F10DD930251960B000B6B7A3 /* Info.plist */,
@@ -154,6 +157,7 @@
 			files = (
 				F18AC00D251C02A500FF7469 /* BLEScannerVM.swift in Sources */,
 				F10DD923251960AE00B6B7A3 /* AppDelegate.swift in Sources */,
+				F1CA35E6252E7E4100524F01 /* DataHexEncoding.swift in Sources */,
 				F10DD93725196AAE00B6B7A3 /* BLEScanners.swift in Sources */,
 				F10DD925251960AE00B6B7A3 /* SceneDelegate.swift in Sources */,
 				F10DD93925196F2100B6B7A3 /* BLEScannerView.swift in Sources */,

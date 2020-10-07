@@ -9,7 +9,7 @@
 import SwiftUI
 import CoreBluetooth
 
-class BLEScannerVM: NSObject, ObservableObject, CBCentralManagerDelegate {
+class BLEScannerVM: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     
     @Published private var scannerdata: BLESensors = createBLESensors()
     var centralManager : CBCentralManager!
@@ -42,9 +42,34 @@ class BLEScannerVM: NSObject, ObservableObject, CBCentralManagerDelegate {
     
     func connect(peripheral: BLESensor) {
         print("called connect...")
-//        centralManager.connect(peripheral.peripheral, options:nil)
+        peripheral.peripheral.delegate = self
+        centralManager.connect(peripheral.peripheral, options:nil)
     }
     
+    func disconnect(peripheral: BLESensor) {
+        var dataString: String = ""
+        print("disconnect...")
+        centralManager.cancelPeripheralConnection(peripheral.peripheral)
+        print("data count: \(peripheral.data.count)")
+        for dataPoint in peripheral.data {
+            dataString = dataString + "\(dataPoint) \n"
+        }
+        
+        let fileURL = URL(fileURLWithPath: "data", relativeTo: getDocumentsDirectory()).appendingPathExtension("txt")
+        do {
+            try dataString.write(to: fileURL, atomically: true, encoding: String.Encoding.utf8)
+            print("saving data...")
+        } catch {
+            print("something went wrong writing the data")
+            // failed to write file – bad permissions, bad filename, missing permissions, or more likely it can't be converted to the encoding
+        }
+    }
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
+
     // MARK: - Bluetooth
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         print("DidUpdateState called")
@@ -64,6 +89,49 @@ class BLEScannerVM: NSObject, ObservableObject, CBCentralManagerDelegate {
                                     rssi: Int(truncating: RSSI),
                                     peripheral:peripheral,
                                     uuid: peripheral.identifier)
+    }
+    
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        print("peripheral connected: \(peripheral)")
+        peripheral.discoverServices([pressure_service_uuid])
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        print("service discovered:")
+        if let services = peripheral.services {
+            for service in services {
+                print("\(service)")
+                peripheral.discoverCharacteristics([pressure_char_uuid], for: service)
+            }
+        }
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+        print("characteristic discovered")
+        if let characteristics = service.characteristics {
+            for characteristic in characteristics {
+                print("characteristic: \(characteristic)")
+                peripheral.setNotifyValue(true, for: characteristic)
+            }
+        }
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        print(characteristic.value!.hexEncodedString())
+        var first: Bool = true
+        var sensorValue: Int = 0
+        if let values = characteristic.value {
+            values.forEach { (digit) in
+                if first {
+                    sensorValue = Int(digit)
+                    first = false
+                } else {
+                    sensorValue = sensorValue + Int(digit)*256
+                    scannerdata.adddata(id: peripheral.identifier, sensorData: sensorValue)
+                    first = true
+                }
+            }
+        }
     }
     
     let pressure_char_uuid = CBUUID(string:"5A8AC39C-0CE1-4212-8B46-D589BA126CE2")

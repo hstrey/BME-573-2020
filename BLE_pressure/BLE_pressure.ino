@@ -53,8 +53,8 @@ void setup() {
   delay(1000);
   
   // trying to find out what the size of int is for RF52
-  Serial.print("sizeof int: ");
-  Serial.println(sizeof(intervalmicsec));
+  //Serial.print("sizeof int: ");
+  //Serial.println(sizeof(intervalmicsec));
   
   gaitPeripheral.setLocalName("Pressure-Sensor");
 

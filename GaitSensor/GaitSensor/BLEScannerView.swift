@@ -46,8 +46,10 @@ struct BLEScannerView: View {
         var vm:BLEScannerVM
         var body: some View {
             Text("\(sensor.scannerName)").onAppear() {
-                print("dataView appeared")
                 vm.connect(peripheral:sensor)
+            }
+            .onDisappear() {
+                vm.disconnect(peripheral: sensor)
             }
         }
     }
