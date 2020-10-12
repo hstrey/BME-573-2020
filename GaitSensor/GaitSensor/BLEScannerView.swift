@@ -69,10 +69,14 @@ struct BLEScannerView: View {
                             path.move(to: CGPoint(x: 0, y: geometry.size.height/2))
                             path.addLine(to: CGPoint(x: geometry.size.width,y: geometry.size.height/2))
                         }.stroke().foregroundColor(.yellow)
-                        Path {path in
-                            (i,datapoint) in giveMeTheData(width:Int(geometry.size.width),
-                            data: vm.)
-                        }
+                        Path { path in
+                            path.move(to: CGPoint(x: 0, y: geometry.size.height/2))
+                            for i in 0..<Int(geometry.size.width) {
+                                path.addLine(to: CGPoint(x: i,
+                                                         y: Int(geometry.size.height/2+50*sin(CGFloat(i)/10))
+                                ))
+                            }
+                        }.stroke().foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                     }
                 }
             }
