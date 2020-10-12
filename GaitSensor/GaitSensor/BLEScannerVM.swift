@@ -28,6 +28,11 @@ class BLEScannerVM: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
         return scannerdata.availSensors
     }
     
+    var bledata: [Int] {
+        var uuid:UUID
+        return []
+    }
+    
     // MARK: - Intents
     func scan() {
         print("scanning...")

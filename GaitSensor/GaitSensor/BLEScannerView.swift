@@ -45,7 +45,10 @@ struct BLEScannerView: View {
         var sensor:BLESensor
         var vm:BLEScannerVM
         var body: some View {
-            Text("\(sensor.scannerName)").onAppear() {
+            VStack{
+                Text("\(sensor.scannerName)")
+                dataDisplay(sensor:sensor, vm:vm)
+            }.onAppear() {
                 vm.connect(peripheral:sensor)
             }
             .onDisappear() {
@@ -53,10 +56,33 @@ struct BLEScannerView: View {
             }
         }
     }
+    
+    struct dataDisplay: View {
+        var sensor:BLESensor
+        var vm:BLEScannerVM
+        var body: some View {
+            VStack{
+                GeometryReader { geometry in
+                    ZStack{
+                        Rectangle().fill(Color(UIColor.systemBackground)).border(Color.white, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+                        Path { path in
+                            path.move(to: CGPoint(x: 0, y: geometry.size.height/2))
+                            path.addLine(to: CGPoint(x: geometry.size.width,y: geometry.size.height/2))
+                        }.stroke().foregroundColor(.yellow)
+                        Path {path in
+                            (i,datapoint) in giveMeTheData(width:Int(geometry.size.width),
+                            data: vm.)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 //struct ContentView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        BLEChooserView()
+//        dataDisplay()
+//            .preferredColorScheme(.dark)
 //    }
 //}
