@@ -28,10 +28,10 @@ class BLEScannerVM: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeri
         return scannerdata.availSensors
     }
     
-    func bledata(id:UUID) -> [Int] {
+    func bledata(uuid:UUID) -> [Int] {
         for (i,sensor) in scannerdata.availSensors.enumerated() {
-            if sensor.id == id {
-                return scannerdata.availSensors[i].data
+            if sensor.id == uuid {
+               return scannerdata.availSensors[i].data
             }
         }
         return []

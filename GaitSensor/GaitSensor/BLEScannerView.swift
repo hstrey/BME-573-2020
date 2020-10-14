@@ -65,17 +65,26 @@ struct BLEScannerView: View {
                 GeometryReader { geometry in
                     ZStack{
                         Rectangle().fill(Color(UIColor.systemBackground)).border(Color.white, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+                        
                         Path { path in
                             path.move(to: CGPoint(x: 0, y: geometry.size.height/2))
                             path.addLine(to: CGPoint(x: geometry.size.width,y: geometry.size.height/2))
                         }.stroke().foregroundColor(.yellow)
+                        
                         Path { path in
-                            path.move(to: CGPoint(x: 0, y: geometry.size.height/2))
-                            for i in 0..<Int(geometry.size.width) {
-                                path.addLine(to: CGPoint(x: i,
-                                                         y: Int(geometry.size.height/2+50*sin(CGFloat(i)/10))
-                                ))
+                            let data = vm.bledata(uuid: sensor.id)
+                            let width = Int(geometry.size.width)
+                            let lengthData = data.count
+                            var start = data.count - width
+                            if start < 0 {
+                                start = 0
                             }
+                            if lengthData>start {
+                            path.move(to: CGPoint(x: 0.0, y: geometry.size.height*(1.0-CGFloat(data[start])/4096)))
+                            for i in start..<lengthData {
+                                path.addLine(to: CGPoint(x: CGFloat(i-start),
+                                                         y: geometry.size.height*(1.0-CGFloat(data[i])/4096)))
+                            }}
                         }.stroke().foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
                     }
                 }
