@@ -1,0 +1,19 @@
+<!-- templates/base.html -->
+{% load static %}
+
+<html>
+    <head>
+        <title> Message Board </title>
+        <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    </head>
+
+    <body>
+        <header>
+            <h1><a href="{% url 'home' %}"> Message Board </a></h1>
+        </header>
+        <div>
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </body>
+</html>

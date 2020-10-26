@@ -1,6 +1,14 @@
-<h1>Message board homepage</h1>
-<ul>
-  {% for post in all_posts_list %}
-    <li> {{post.text}}</li>
-  {% endfor %}
-</ul>
+<!-- templates/home.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for post in all_posts_list %}
+  <div class="post-entry">
+    <h2>{{post.title}}</h2>
+    <p>{{post.text}}</p>
+  </div>
+{% endfor %}
+
+{% endblock content %}
