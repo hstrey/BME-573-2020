@@ -5,8 +5,12 @@
 {% block content %}
 
 <div class="post-entry">
-    <h2>{{post.title}}</h2>
+    <h2>Title: {{post.title}}</h2>
+    <h3>Author: {{post.author}}</h3>
     <p>{{post.text}}</p>
 </div>
+
+<p><a href="{% url 'post_edit' post.pk %}">+ Edit Message</a></p>
+<p><a href="{% url 'post_delete' post.pk %}">+ Delete Message</a></p>
 
 {% endblock content %}
