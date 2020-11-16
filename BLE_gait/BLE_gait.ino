@@ -22,7 +22,7 @@ TimerClass timer(nrf_timer_num, cc_channel_num);
 
 int taking_data = false;
 unsigned short sensorValue = 0;  // variable to store the value coming from the sensor
-int intervalmicsec = 300000;
+int intervalmicsec = 5000;
 int factor=1;
 int i;
 int counter = 0;
@@ -30,7 +30,7 @@ unsigned char data[20];
 char* dataPointer;
 char* sensorPointer;
 
-// create remote services
+//create remote service
 BLEService GaitService = BLEService("573bc6051c3c4467b4aa44e0c6c6b410");
 
 // create remote characteristics

@@ -23,7 +23,7 @@ TimerClass timer(nrf_timer_num, cc_channel_num);
 
 int taking_data = false;
 unsigned short sensorValue = 0;  // variable to store the value coming from the sensor
-int intervalmicsec = 300000;
+int intervalmicsec = 5000;
 int i,factor;
 int counter = 0;
 unsigned char data[20];
